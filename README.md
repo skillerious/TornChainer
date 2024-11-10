@@ -23,7 +23,7 @@ Welcome to **Target Manager**, a powerful and user-friendly Electron-based appli
 
 ## 📸 Screenshots
 
-![Main Interface](assets/screenshots/main-interface.png)
+![Main Interface](https://github.com/skillerious/TornChainer/blob/main/logo/Screenshot%202024-11-10%20195637.png)
 *Main interface showcasing Favorites and Others.*
 
 ![Add Target Dialog](assets/screenshots/add-target-dialog.png)

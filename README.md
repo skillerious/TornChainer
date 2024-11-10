@@ -174,7 +174,7 @@ Welcome to **Torn Chainer**, the essential tool for **Torn Online** enthusiasts!
 3. Choose whether to merge with existing data or replace it.
 4. Click **Import** to restore your data.
 
-### Integration with Torn API (Under Construction - Coming soon!)
+### Integration with Torn API ⚠️ (Under Construction - Coming soon!) ⚠️
 
 1. Obtain your Torn API token from your Torn account settings.
 2. Navigate to **Settings** > **API Integration**.

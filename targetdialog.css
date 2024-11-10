@@ -1,0 +1,101 @@
+/* targetdialog.css */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Hide scrollbars */
+    font-family: 'Roboto', sans-serif;
+    background-color: #2C3E50;
+    color: #ECF0F1;
+}
+
+#dialogContainer {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    background-color: #34495E;
+    border-radius: 8px;
+    padding: 30px; /* Increased padding */
+    margin: auto;
+    box-sizing: border-box;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 24px; /* Increased font size */
+    color: #ECF0F1;
+}
+
+.form-group {
+    margin-bottom: 25px; /* Increased spacing */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px; /* Increased font size */
+    color: #ECF0F1;
+}
+
+input[type="text"],
+input[type="url"] {
+    width: 100%;
+    padding: 12px 16px; /* Increased padding */
+    border: 1px solid #1ABC9C;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #2C3E50;
+    color: #ECF0F1;
+    font-size: 16px; /* Increased font size */
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus {
+    border-color: #16A085;
+    outline: none;
+    background-color: #1A252F;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px; /* Increased gap between buttons */
+    margin-top: 30px; /* Increased spacing above buttons */
+}
+
+button {
+    padding: 12px 24px; /* Increased padding */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+#saveBtn {
+    background-color: #1ABC9C;
+    color: #fff;
+}
+
+#saveBtn:hover {
+    background-color: #16A085;
+}
+
+#cancelBtn {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+#cancelBtn:hover {
+    background-color: #c0392b;
+}
+
+button i {
+    margin-right: 10px; /* Increased spacing */
+    font-size: 18px; /* Increased icon size */
+}

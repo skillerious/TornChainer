@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Your App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="toolbar">
+        <div class="toolbar-group left-group">
+            <!-- Sidebar Toggle Button at the Far Left -->
+            <button id="toggleSidebarBtn">
+                <img src="assets/sidebar.png" alt="Toggle Sidebar">
+            </button>
+            <button id="homeBtn">
+                <img src="assets/home.png" alt="Home">
+            </button>
+            <button id="prevBtn">
+                <img src="assets/prev.png" alt="Previous">
+            </button>
+            <button id="nextBtn">
+                <img src="assets/next.png" alt="Next">
+            </button>
+        </div>
+        <div class="toolbar-group right-group">
+            <button id="themeToggleBtn">
+                <img id="themeIcon" src="assets/sun.png" alt="Light Mode">
+            </button>
+        </div>
+    </div>
+    <div id="container">
+        <div id="sidebar">
+            <!-- Sidebar Action Buttons -->
+            <div id="sidebar-actions">
+                <button id="addTargetBtn">
+                    <img src="assets/add-icon.png" alt="Add Target">
+                    <span>Add Target</span>
+                </button>
+                <button id="importBtn">
+                    <img src="assets/import-icon.png" alt="Import">
+                    <span>Import</span>
+                </button>
+                <button id="exportBtn">
+                    <img src="assets/export-icon.png" alt="Export">
+                    <span>Export</span>
+                </button>
+            </div>
+            <!-- Search Input -->
+            <input type="text" id="searchInput" placeholder="Search targets...">
+            <!-- Favorites Group -->
+            <div id="favoritesGroup">
+                <h3>
+                    Favorites
+                    <img src="assets/sort-icon.png" alt="Sort" class="sort-icon" id="favoritesSortIcon">
+                </h3>
+                <div class="empty-state" id="favoritesEmptyState">
+                    <img src="assets/empty.png" alt="No Favorites">
+                    <p>No favorites added yet.</p>
+                </div>
+                <ul id="favoritesList">
+                    <!-- Favorites will be populated here -->
+                </ul>
+            </div>
+            <!-- Draggable Divider -->
+            <div id="divider"></div>
+            <!-- Other Targets Group -->
+            <div id="othersGroup">
+                <h3>
+                    Others
+                    <img src="assets/sort-icon.png" alt="Sort" class="sort-icon" id="othersSortIcon">
+                </h3>
+                <div class="empty-state" id="othersEmptyState">
+                    <img src="assets/empty.png" alt="No Targets">
+                    <p>No targets available.</p>
+                </div>
+                <ul id="targetList">
+                    <!-- Other targets will be populated here -->
+                </ul>
+            </div>
+        </div>
+        <div id="content">
+            <div id="tabBar">
+                <button id="newTabBtn">+</button>
+                <div id="tabsContainer">
+                    <!-- Tabs will be added here -->
+                </div>
+            </div>
+            <div id="webviewContainer">
+                <!-- Webviews will be added here -->
+                <div id="loadingOverlay">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+</html>

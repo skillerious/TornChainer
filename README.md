@@ -1,7 +1,7 @@
 
 # 🎯 Torn Chainer
 
-![App Logo](assets/icon.png)
+![App Logo](https://github.com/skillerious/TornChainer/blob/main/logo/tornapplogonew.png)
 
 Welcome to **Target Manager**, a powerful and user-friendly Electron-based application designed to help you manage your targets efficiently. Whether you're organizing your favorite websites, keeping track of important links, or simply browsing the web, Target Manager offers a seamless experience with a sleek interface and robust features.
 

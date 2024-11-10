@@ -26,11 +26,8 @@ Welcome to **Target Manager**, a powerful and user-friendly Electron-based appli
 ![Main Interface](https://github.com/skillerious/TornChainer/blob/main/logo/Screenshot%202024-11-10%20195637.png)
 *Main interface showcasing Favorites and Others.*
 
-![Add Target Dialog](assets/screenshots/add-target-dialog.png)
+![Add Target Dialog](https://github.com/skillerious/TornChainer/blob/main/logo/Screenshot%202024-11-10%20195650.png)
 *Add Target dialog with additional fields.*
-
-![Edit Target Dialog](assets/screenshots/edit-target-dialog.png)
-*Edit Target dialog for modifying existing targets.*
 
 ## 🛠️ Installation
 

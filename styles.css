@@ -1,15 +1,26 @@
 /* styles.css */
 
-/* General Styles */
-body {
+/* Reset and Base Styles */
+* {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
-  background-color: #1e1e1e;
-  color: #ECF0F1;
-  height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #1e1e1e;
+  color: #ECF0F1;
   transition: background-color 0.3s, color 0.3s;
+}
+
+body.light-mode {
+  background-color: #ECF0F1;
+  color: #2C3E50;
 }
 
 /* Toolbar */
@@ -20,6 +31,10 @@ body {
   background: linear-gradient(to bottom, #34495E, #2C3E50);
   padding: 10px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+body.light-mode #toolbar {
+  background: linear-gradient(to bottom, #ECF0F1, #BDC3C7);
 }
 
 .toolbar-group {
@@ -71,23 +86,17 @@ button:active {
   transform: translateY(0);
 }
 
-#statusLabel {
-  font-size: 18px;
-  font-weight: 500;
-  white-space: nowrap;
-  color: #ECF0F1;
+#themeIcon {
+  width: 24px;
+  height: 24px;
 }
 
-#toolbar.light-mode {
-  background: linear-gradient(to bottom, #ECF0F1, #BDC3C7);
-}
-
-#toolbar.light-mode button {
+body.light-mode button {
   color: #2C3E50;
 }
 
-#toolbar.light-mode #statusLabel {
-  color: #2C3E50;
+body.light-mode #themeIcon {
+  filter: invert(0);
 }
 
 /* Container */
@@ -108,6 +117,10 @@ button:active {
   overflow: hidden;
   position: relative;
   background: linear-gradient(to bottom, #2C3E50, #1e1e1e);
+}
+
+body.light-mode #sidebar {
+  background: linear-gradient(to bottom, #BDC3C7, #95A5A6);
 }
 
 #sidebar.collapsed {
@@ -156,21 +169,6 @@ button:active {
   margin: 0 auto;
 }
 
-body.light-mode #sidebar-actions button {
-  color: #2C3E50;
-}
-
-body.light-mode #sidebar-actions button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Hide the search input and labels when collapsed */
-#sidebar.collapsed #searchInput,
-#sidebar.collapsed .label,
-#sidebar.collapsed h3 {
-  display: none;
-}
-
 /* Search Input */
 #searchInput {
   flex: 0 0 auto;
@@ -194,21 +192,30 @@ body.light-mode #sidebar-actions button:hover {
   color: #95A5A6;
 }
 
+body.light-mode #searchInput {
+  background-color: #95A5A6;
+  color: #2C3E50;
+}
+
+body.light-mode #searchInput::placeholder {
+  color: #7F8C8D;
+}
+
 /* Favorites and Others Groups */
 #favoritesGroup,
 #othersGroup {
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 #favoritesGroup {
-  /* Initial height */
   height: 50%; /* Adjust as needed */
 }
 
 #othersGroup {
-  /* Adjust height to fill remaining space */
-  flex: 1 1 auto;
+  flex: 1;
   height: calc(50% - 5px); /* Adjust as needed */
 }
 
@@ -252,7 +259,7 @@ body.light-mode .sort-icon {
   padding: 0;
   margin: 0;
   overflow-y: auto;
-  height: calc(100% - 40px); /* Adjust to account for header height */
+  flex: 1;
 }
 
 #favoritesList li,
@@ -267,17 +274,6 @@ body.light-mode .sort-icon {
   align-items: center;
   position: relative;
   white-space: nowrap;
-}
-
-#favoritesList li.active,
-#targetList li.active {
-  background-color: #1ABC9C;
-  color: #ffffff;
-}
-
-body.light-mode #favoritesList li.active,
-body.light-mode #targetList li.active {
-  background-color: #E74C3C;
 }
 
 #favoritesList li .icon,
@@ -313,6 +309,44 @@ body.light-mode .target-favorite {
   filter: invert(0);
 }
 
+/* Active List Item Style */
+#favoritesList li.active,
+#targetList li.active {
+  background-color: #1ABC9C;
+  color: #ffffff;
+}
+
+body.light-mode #favoritesList li.active,
+body.light-mode #targetList li.active {
+  background-color: #E74C3C;
+  color: #ffffff;
+}
+
+/* Hover Effects for List Items */
+#favoritesList li:hover,
+#targetList li:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+body.light-mode #favoritesList li:hover,
+body.light-mode #targetList li:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure active list item stands out even on hover */
+#favoritesList li.active:hover,
+#targetList li.active:hover {
+  background-color: #16A085;
+  transform: none;
+}
+
+body.light-mode #favoritesList li.active:hover,
+body.light-mode #targetList li.active:hover {
+  background-color: #C0392B;
+}
+
+/* Adjustments for collapsed sidebar */
 #sidebar.collapsed #favoritesList li .icon,
 #sidebar.collapsed #targetList li .icon {
   margin: 0 auto;
@@ -334,37 +368,13 @@ body.light-mode .target-favorite {
   margin-left: 5px;
 }
 
-body.light-mode #favoritesList li,
-body.light-mode #targetList li {
-  border-bottom: 1px solid #95A5A6;
-}
-
-body.light-mode #favoritesList li:hover,
-body.light-mode #targetList li:hover,
-body.light-mode #favoritesList li.active,
-body.light-mode #targetList li.active {
-  background-color: #AAB7B8;
-  transform: translateY(-1px);
-}
-
-body.light-mode #favoritesList li.active,
-body.light-mode #targetList li.active {
-  color: #E74C3C;
-}
-
-#favoritesList li mark,
-#targetList li mark {
-  background-color: yellow;
-  color: black;
-}
-
 /* Empty State Styles */
 .empty-state {
   display: none; /* Hidden by default */
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100% - 40px); /* Adjusted to account for header height */
+  flex: 1;
 }
 
 .empty-state img {
@@ -416,13 +426,17 @@ body.light-mode #divider:hover {
   flex: 1;
 }
 
-/* Adjusted Tab Bar Styles */
+/* Tab Bar Styles */
 #tabBar {
   display: flex;
   align-items: center;
   background: linear-gradient(to bottom, #2C3E50, #34495E);
   padding: 2px;
   height: 30px; /* Reduced height */
+}
+
+body.light-mode #tabBar {
+  background: linear-gradient(to bottom, #ECF0F1, #BDC3C7);
 }
 
 #newTabBtn {
@@ -437,6 +451,14 @@ body.light-mode #divider:hover {
 
 #newTabBtn:hover {
   color: #1ABC9C;
+}
+
+body.light-mode #newTabBtn {
+  color: #2C3E50;
+}
+
+body.light-mode #newTabBtn:hover {
+  color: #E74C3C;
 }
 
 #tabsContainer {
@@ -465,6 +487,16 @@ body.light-mode #divider:hover {
   background-color: #1ABC9C;
 }
 
+body.light-mode .tab {
+  background-color: #BDC3C7;
+  color: #2C3E50;
+}
+
+body.light-mode .tab.active {
+  background-color: #E74C3C;
+  color: #ECF0F1;
+}
+
 .tab .close-btn {
   margin-left: 5px;
   color: #ECF0F1;
@@ -479,6 +511,14 @@ body.light-mode #divider:hover {
   color: #E74C3C;
 }
 
+body.light-mode .tab .close-btn {
+  color: #2C3E50;
+}
+
+body.light-mode .tab .close-btn:hover {
+  color: #C0392B;
+}
+
 /* Webview Container */
 #webviewContainer {
   flex: 1;
@@ -487,13 +527,13 @@ body.light-mode #divider:hover {
   height: calc(100vh - 60px - 30px); /* 60px toolbar, 30px tab bar */
 }
 
-webview {
+.webview {
   display: none;
   flex: 1;
   border: none;
 }
 
-webview.active {
+.webview.active {
   display: flex;
 }
 
@@ -505,11 +545,14 @@ webview.active {
   width: 100%;
   height: 100%;
   background: rgba(30, 30, 30, 0.8);
-  display: flex;
+  display: none; /* Hidden by default */
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  display: none; /* Hidden by default */
+}
+
+body.light-mode #loadingOverlay {
+  background: rgba(236, 240, 241, 0.8);
 }
 
 .spinner {
@@ -522,52 +565,46 @@ webview.active {
   box-shadow: 0 0 10px #1ABC9C;
 }
 
+body.light-mode .spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #E74C3C;
+  box-shadow: 0 0 10px #E74C3C;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* Light Mode Styles */
-body.light-mode {
-  background-color: #ECF0F1;
-  color: #2C3E50;
+/* Mark Highlighting */
+mark {
+  background-color: #F1C40F;
+  color: inherit;
 }
 
-body.light-mode #toolbar {
-  background: linear-gradient(to bottom, #ECF0F1, #BDC3C7);
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
 }
 
-body.light-mode button {
-  color: #2C3E50;
+::-webkit-scrollbar-track {
+  background: #2C3E50;
 }
 
-body.light-mode #sidebar {
-  background: linear-gradient(to bottom, #BDC3C7, #95A5A6);
+::-webkit-scrollbar-thumb {
+  background-color: #1ABC9C;
+  border-radius: 6px;
+  border: 3px solid #2C3E50;
+  min-height: 50px;
 }
 
-body.light-mode #searchInput {
-  background-color: #95A5A6;
-  color: #2C3E50;
+body.light-mode ::-webkit-scrollbar-track {
+  background: #BDC3C7;
 }
 
-body.light-mode #searchInput::placeholder {
-  color: #7F8C8D;
-}
-
-body.light-mode .tab {
-  background-color: #BDC3C7;
-  color: #2C3E50;
-}
-
-body.light-mode .tab.active {
+body.light-mode ::-webkit-scrollbar-thumb {
   background-color: #E74C3C;
-  color: #ECF0F1;
-}
-
-body.light-mode .spinner {
-  border: 8px solid #f3f3f3;
-  border-top: 8px solid #E74C3C;
-  box-shadow: 0 0 10px #E74C3C;
+  border: 3px solid #BDC3C7;
 }
 
 /* Remove focus outline */
@@ -587,28 +624,6 @@ button:focus {
   filter: none;
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #2C3E50;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #1ABC9C;
-  border-radius: 6px;
-  border: 3px solid #2C3E50;
-  min-height: 50px; /* Adjusted minimum height */
-}
-
-body.light-mode ::-webkit-scrollbar-track {
-  background: #BDC3C7;
-}
-
-body.light-mode ::-webkit-scrollbar-thumb {
-  background-color: #E74C3C;
-  border: 3px solid #BDC3C7;
-  min-height: 50px; /* Adjusted minimum height */
+body.light-mode #sidebar .icon {
+  filter: none;
 }

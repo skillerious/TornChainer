@@ -105,52 +105,122 @@ function createEditTargetWindow(target) {
 
 // Function to create a context menu
 function createContextMenu(params) {
-    const template = [
-        {
-            label: 'Open in Current Tab',
-            click: () => {
-                // Send IPC event to renderer to load the target in the current tab
-                mainWindow.webContents.send('open-in-current-tab', { url: params.url });
-            }
-        },
-        {
-            label: 'Open in New Tab',
-            click: () => {
-                // Send IPC event to renderer to open the target in a new tab
-                mainWindow.webContents.send('open-in-new-tab', { url: params.url, username: params.username });
-            }
-        },
-        { type: 'separator' },
-        {
-            label: 'Copy URL',
-            click: () => {
-                // Copy the URL to clipboard
-                require('electron').clipboard.writeText(params.url);
-            }
-        }
-    ];
+    let template = [];
 
-    // Customize the menu based on the context
     if (params.type === 'sidebar') {
-        // Additional options for sidebar items
-        template.unshift({
-            label: params.target.favorite ? 'Remove from Favorites' : 'Add to Favorites',
-            click: () => {
-                // Handle adding/removing from favorites
-                const targets = readTargets();
-                const targetIndex = targets.findIndex(t => t.username === params.target.username);
-                if (targetIndex !== -1) {
-                    targets[targetIndex].favorite = !targets[targetIndex].favorite;
-                    writeTargets(targets);
-                    // Notify renderer to refresh targets
-                    mainWindow.webContents.send('refresh-targets');
+        const target = params.target;
+        template = [
+            {
+                label: target.favorite ? 'Remove from Favorites' : 'Add to Favorites',
+                click: () => {
+                    const targets = readTargets();
+                    const targetIndex = targets.findIndex(t => t.username === target.username);
+                    if (targetIndex !== -1) {
+                        targets[targetIndex].favorite = !targets[targetIndex].favorite;
+                        writeTargets(targets);
+                        // **Send updated targets back to renderer**
+                        mainWindow.webContents.send('send-targets', { targets });
+                    }
+                }
+            },
+            {
+                label: 'Open in Current Tab',
+                click: () => {
+                    mainWindow.webContents.send('open-target-in-current-tab', { url: target.url });
+                }
+            },
+            {
+                label: 'Open in New Tab',
+                click: () => {
+                    mainWindow.webContents.send('open-target-in-new-tab', { target });
+                }
+            },
+            { type: 'separator' },
+            {
+                label: 'Copy URL',
+                click: () => {
+                    require('electron').clipboard.writeText(target.url);
+                }
+            },
+            { type: 'separator' },
+            {
+                label: 'Edit',
+                click: () => {
+                    ipcMain.emit('edit-target', mainWindow, target);
+                }
+            },
+            {
+                label: 'Delete',
+                click: () => {
+                    // Confirm deletion
+                    dialog.showMessageBox(mainWindow, {
+                        type: 'warning',
+                        buttons: ['Cancel', 'Delete'],
+                        defaultId: 1,
+                        cancelId: 0,
+                        title: 'Confirm Deletion',
+                        message: `Are you sure you want to delete target "${target.username}"?`,
+                    }).then(result => {
+                        if (result.response === 1) { // 'Delete' button index
+                            ipcMain.emit('delete-target', mainWindow, target.username);
+                        }
+                    });
                 }
             }
-        });
+        ];
+    } else if (params.type === 'webview') {
+        const href = params.params.href;
+        if (href) {
+            template = [
+                {
+                    label: 'Open Link in New Tab',
+                    click: () => {
+                        mainWindow.webContents.send('open-link-in-new-tab', href);
+                    }
+                },
+                { type: 'separator' },
+                {
+                    label: 'Copy Link Address',
+                    click: () => {
+                        require('electron').clipboard.writeText(href);
+                    }
+                }
+            ];
+        } else {
+            // No link clicked; general context menu
+            template = [
+                {
+                    label: 'Back',
+                    click: () => {
+                        mainWindow.webContents.send('webview-go-back');
+                    }
+                },
+                {
+                    label: 'Forward',
+                    click: () => {
+                        mainWindow.webContents.send('webview-go-forward');
+                    }
+                },
+                { type: 'separator' },
+                {
+                    label: 'Reload',
+                    click: () => {
+                        mainWindow.webContents.send('webview-reload');
+                    }
+                },
+                { type: 'separator' },
+                {
+                    label: 'Inspect Element',
+                    click: () => {
+                        mainWindow.webContents.send('webview-inspect-element', params.params.x, params.params.y);
+                    }
+                }
+            ];
+        }
     }
 
     const menu = Menu.buildFromTemplate(template);
-    menu.popup();
+    menu.popup(BrowserWindow.fromWebContents(mainWindow.webContents));
 }
 
 // Function to read targets from the JSON file
@@ -205,9 +275,9 @@ app.whenReady().then(() => {
             targets.push(newTarget);
             writeTargets(targets);
 
-            // Notify main window to refresh targets
+            // **Notify main window to refresh targets**
             if (mainWindow) {
-                mainWindow.webContents.send('refresh-targets');
+                mainWindow.webContents.send('send-targets', { targets });
             }
 
             // Close the add target dialog
@@ -270,9 +340,9 @@ app.whenReady().then(() => {
             targets[targetIndex] = updatedTarget;
             writeTargets(targets);
 
-            // Notify main window to refresh targets
+            // **Notify main window to refresh targets**
             if (mainWindow) {
-                mainWindow.webContents.send('refresh-targets');
+                mainWindow.webContents.send('send-targets', { targets });
             }
 
             // Close the edit dialog
@@ -308,9 +378,9 @@ app.whenReady().then(() => {
 
             writeTargets(updatedTargets);
 
-            // Notify main window to refresh targets
+            // **Notify main window to refresh targets**
             if (mainWindow) {
-                mainWindow.webContents.send('refresh-targets');
+                mainWindow.webContents.send('send-targets', { targets: updatedTargets });
             }
 
             dialog.showMessageBox(mainWindow, {
@@ -330,12 +400,11 @@ app.whenReady().then(() => {
         event.sender.send('send-targets', { targets });
     });
 
-    // Listen for 'refresh-targets' event to reload targets data
-    ipcMain.on('refresh-targets', (event) => {
-        const targets = readTargets();
-        if (mainWindow) {
-            mainWindow.webContents.send('send-targets', { targets });
-        }
+    // Listen for 'update-targets' event from renderer (e.g., when favorites are toggled)
+    ipcMain.on('update-targets', (event, updatedTargets) => {
+        writeTargets(updatedTargets);
+        // **Send updated targets back to renderer**
+        mainWindow.webContents.send('send-targets', { targets: updatedTargets });
     });
 
     // Listen for 'open-context-menu' event to show contextual menu
@@ -349,18 +418,8 @@ app.whenReady().then(() => {
     });
 
     // Handle 'open-target-in-new-tab' from context menu in sidebar
-    ipcMain.on('open-target-in-new-tab', (event, { target }) => {
-        mainWindow.webContents.send('open-target-in-new-tab', target);
-    });
-
-    // Handle 'open-in-current-tab' from context menu
-    ipcMain.on('open-in-current-tab', (event, { url }) => {
-        mainWindow.webContents.send('open-in-current-tab', url);
-    });
-
-    // Handle 'open-in-new-tab' from context menu
-    ipcMain.on('open-in-new-tab', (event, { url, username }) => {
-        mainWindow.webContents.send('open-in-new-tab', { url, username });
+    ipcMain.on('open-target-in-new-tab', (event, target) => {
+        mainWindow.webContents.send('open-target-in-new-tab', { target });
     });
 
     // **Export Targets**
@@ -426,18 +485,15 @@ app.whenReady().then(() => {
 
             event.sender.send('import-success');
 
-            // Notify main window to refresh targets
+            // **Notify main window to refresh targets**
             if (mainWindow) {
-                mainWindow.webContents.send('refresh-targets');
+                mainWindow.webContents.send('send-targets', { targets: combinedTargets });
             }
         } catch (error) {
             console.error('Error importing targets:', error);
             event.sender.send('import-failure', error.message);
         }
     });
-
-    // Listen for 'open-target-dialog' to handle external requests to open dialogs
-    // This can be expanded based on your application's needs
 });
 
 // Quit the app when all windows are closed (except on macOS)

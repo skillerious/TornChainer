@@ -27,8 +27,13 @@ const othersEmptyState = document.getElementById('othersEmptyState');
 const favoritesSortIcon = document.getElementById('favoritesSortIcon');
 const othersSortIcon = document.getElementById('othersSortIcon');
 
-// Tab Management Elements
+// API Key Button
+const apiKeyBtn = document.getElementById('apiKeyBtn');
+
+// Assuming you have a button with id 'newTabBtn'
 const newTabBtn = document.getElementById('newTabBtn');
+
+// Tabs Container and Webview Container
 const tabsContainer = document.getElementById('tabsContainer');
 const webviewContainer = document.getElementById('webviewContainer');
 
@@ -36,10 +41,35 @@ let targets = [];
 let filteredTargets = [];
 let tabs = [];
 let activeTabId = null;
+let apiKey = null;
+let isReady = false;
 
 // Sort Orders
 let favoritesSortOrder = 'asc';
 let othersSortOrder = 'asc';
+
+// Variable to keep track of the current batch index
+let currentBatchIndex = 0; // 0 or 1
+
+// Request the API key from the main process
+ipcRenderer.send('request-api-key');
+
+// Handle the 'send-api-key' event
+ipcRenderer.on('send-api-key', (event, key) => {
+    apiKey = key;
+    if (!apiKey) {
+        // Prompt the user to enter the API key
+        ipcRenderer.send('open-api-key-dialog');
+    } else {
+        checkReadyState();
+    }
+});
+
+// Handle 'api-key-updated' event
+ipcRenderer.on('api-key-updated', (event, key) => {
+    apiKey = key;
+    checkReadyState();
+});
 
 // Request targets data from main process
 ipcRenderer.send('request-targets');
@@ -51,7 +81,16 @@ ipcRenderer.on('send-targets', (event, data) => {
     populateTargetLists(filteredTargets);
     // Update active list item based on current tab
     updateActiveListItem();
+    checkReadyState();
 });
+
+// Function to check if the app is ready to start updating statuses
+function checkReadyState() {
+    if (apiKey && targets.length > 0 && !isReady) {
+        isReady = true;
+        startUpdatingPlayerStatuses();
+    }
+}
 
 // Populate the favorites and others lists
 function populateTargetLists(targetsToDisplay) {
@@ -132,6 +171,13 @@ function createTargetListItem(target, query) {
     label.classList.add('label');
     label.innerHTML = highlightText(target.username, query);
 
+    // Set the text color based on the status
+    if (['Hospital', 'In Hospital', 'Jail', 'In Jail', 'Federal Jail'].includes(target.status)) {
+        label.style.color = 'red';
+    } else {
+        label.style.color = ''; // Default color
+    }
+
     // Create favorite icon
     const favoriteIcon = document.createElement('img');
     favoriteIcon.src = target.favorite ? 'assets/starfull.png' : 'assets/starempty.png';
@@ -207,9 +253,11 @@ searchInput.addEventListener('input', (e) => {
 createNewTab('https://www.torn.com');
 
 // New Tab Button
-newTabBtn.addEventListener('click', () => {
-    createNewTab('https://www.torn.com');
-});
+if (newTabBtn) {
+    newTabBtn.addEventListener('click', () => {
+        createNewTab('https://www.torn.com');
+    });
+}
 
 // Function to create a new tab
 function createNewTab(url, title = 'New Tab', target = null) {
@@ -243,7 +291,6 @@ function createNewTab(url, title = 'New Tab', target = null) {
     // Create webview
     const webviewElement = document.createElement('webview');
     webviewElement.src = url;
-    webviewElement.setAttribute('preload', 'webview-preload.js');
     webviewElement.setAttribute('disableguestresize', '');
     webviewElement.classList.add('webview');
     webviewElement.id = `webview-${tabId}`;
@@ -448,22 +495,6 @@ window.addEventListener('keydown', (e) => {
                 break;
             default:
                 break;
-        }
-    }
-});
-
-// Mouse Back and Forward Button Navigation
-window.addEventListener('mouseup', (e) => {
-    const webview = getActiveWebview();
-    if (webview) {
-        if (e.button === 3) { // Mouse back button
-            if (webview.canGoBack()) {
-                webview.goBack();
-            }
-        } else if (e.button === 4) { // Mouse forward button
-            if (webview.canGoForward()) {
-                webview.goForward();
-            }
         }
     }
 });
@@ -810,3 +841,119 @@ function updateSortIcon(iconElement, sortOrder) {
 // Initialize sort icons
 updateSortIcon(favoritesSortIcon, favoritesSortOrder);
 updateSortIcon(othersSortIcon, othersSortOrder);
+
+// API Key Button
+apiKeyBtn.addEventListener('click', () => {
+    ipcRenderer.send('open-api-key-dialog');
+});
+
+// Function to start updating player statuses every minute
+function startUpdatingPlayerStatuses() {
+    // Start the interval to update player statuses
+    updatePlayerStatuses(); // Call immediately
+    setInterval(updatePlayerStatuses, 60 * 1000); // Every minute
+}
+
+// Function to extract user ID from target URL
+function extractUserIdFromUrl(url) {
+    try {
+        const urlObj = new URL(url);
+        const searchParams = urlObj.searchParams;
+        const XID = searchParams.get('XID');
+        if (XID) {
+            return XID;
+        } else {
+            // Try to extract from the hash
+            // For example, if the URL is https://www.torn.com/profiles.php#/p=123456
+            const hash = urlObj.hash;
+            const match = hash.match(/p=(\d+)/);
+            if (match && match[1]) {
+                return match[1];
+            } else {
+                console.warn('Unable to extract user ID from URL:', url);
+                return null;
+            }
+        }
+    } catch (error) {
+        console.error('Invalid URL:', url);
+        return null;
+    }
+}
+
+// Function to update player statuses
+function updatePlayerStatuses() {
+    if (!apiKey) {
+        console.error('API key is not set.');
+        return;
+    }
+
+    console.log('Starting updatePlayerStatuses');
+
+    // Split the targets into two batches
+    const batchSize = Math.ceil(targets.length / 2);
+    const start = currentBatchIndex * batchSize;
+    const end = Math.min(start + batchSize, targets.length);
+    const batchTargets = targets.slice(start, end);
+
+    // Toggle between batches
+    currentBatchIndex = (currentBatchIndex + 1) % 2;
+
+    const userIdMap = {}; // Map of userId to target
+    const userIds = batchTargets.map(target => {
+        const userId = extractUserIdFromUrl(target.url);
+        if (userId) {
+            userIdMap[userId] = target;
+            return userId;
+        } else {
+            console.warn(`Could not extract user ID from URL: ${target.url}`);
+            return null;
+        }
+    }).filter(id => id !== null);
+
+    console.log(`Collected ${userIds.length} user IDs in batch ${currentBatchIndex}`);
+
+    if (userIds.length === 0) {
+        console.log('No user IDs to update in this batch.');
+        return;
+    }
+
+    const promises = userIds.map((userId, index) => {
+        const url = `https://api.torn.com/user/${userId}?selections=profile&key=${apiKey}`;
+
+        console.log(`Fetching user ${index + 1}/${userIds.length}: ${url}`);
+
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error from API:', data.error);
+                    return;
+                }
+
+                if (!data.status || !data.status.state) {
+                    console.warn(`Missing status data for user ID: ${userId}`);
+                    return;
+                }
+
+                const status = data.status.state;
+
+                // Update the target object
+                const target = userIdMap[userId];
+                if (target) {
+                    target.status = status;
+                    console.log(`Updated status for ${target.username} (ID: ${userId}): ${status}`);
+                } else {
+                    console.warn(`Target not found for user ID: ${userId}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user status:', error);
+            });
+    });
+
+    // After all requests are processed, update the UI
+    Promise.all(promises).then(() => {
+        console.log('All user statuses in batch updated. Updating UI.');
+        populateTargetLists(filteredTargets);
+    });
+}

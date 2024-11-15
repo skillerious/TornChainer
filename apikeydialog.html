@@ -1,0 +1,32 @@
+<!-- apikeydialog.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Enter API Key</title>
+    <link rel="stylesheet" href="apikeydialog.css">
+</head>
+<body>
+    <div class="dialog">
+        <div class="dialog-header">
+            <img src="assets/logo.png" alt="App Logo" class="logo">
+            <h2>Enter Your API Key</h2>
+        </div>
+        <div class="dialog-content">
+            <p>Please enter your Torn.com API key to enable status updates.</p>
+            <div class="input-group">
+                <input type="password" id="apiKeyInput" placeholder="API Key">
+                <span class="toggle-visibility" id="toggleVisibility">
+                    <img src="assets/show-icon.png" alt="Show API Key" id="visibilityIcon">
+                </span>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+        <div class="dialog-footer">
+            <button id="saveApiKeyBtn">Save</button>
+            <button id="cancelBtn">Cancel</button>
+        </div>
+    </div>
+    <script src="apikeydialog.js"></script>
+</body>
+</html>

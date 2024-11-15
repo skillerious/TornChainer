@@ -6,10 +6,42 @@ const fs = require('fs');
 let mainWindow;
 let addTargetWindow;
 let editTargetWindow;
+let apiKeyWindow; // New window for API key input
 
 // Function to get the path to targets.json in userData directory
 function getTargetsPath() {
     return path.join(app.getPath('userData'), 'targets.json');
+}
+
+// Function to get the path to config.json in userData directory
+function getConfigPath() {
+    return path.join(app.getPath('userData'), 'config.json');
+}
+
+// Function to read config from the JSON file
+function readConfig() {
+    try {
+        const configPath = getConfigPath();
+        if (fs.existsSync(configPath)) {
+            const data = fs.readFileSync(configPath, 'utf-8');
+            return JSON.parse(data);
+        } else {
+            return {};
+        }
+    } catch (error) {
+        console.error('Error reading config data:', error);
+        return {};
+    }
+}
+
+// Function to write config to the JSON file
+function writeConfig(config) {
+    try {
+        const configPath = getConfigPath();
+        fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+    } catch (error) {
+        console.error('Error writing config data:', error);
+    }
 }
 
 // Function to create the main application window
@@ -103,6 +135,33 @@ function createEditTargetWindow(target) {
     });
 }
 
+// Function to create the API Key dialog
+function createApiKeyWindow() {
+    apiKeyWindow = new BrowserWindow({
+        width: 400,
+        height: 250,
+        parent: mainWindow,
+        modal: true,
+        show: false,
+        autoHideMenuBar: true,
+        menu: null,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
+
+    apiKeyWindow.loadFile('apikeydialog.html');
+
+    apiKeyWindow.once('ready-to-show', () => {
+        apiKeyWindow.show();
+    });
+
+    apiKeyWindow.on('closed', () => {
+        apiKeyWindow = null;
+    });
+}
+
 // Function to create a context menu
 function createContextMenu(params) {
     let template = [];
@@ -118,7 +177,7 @@ function createContextMenu(params) {
                     if (targetIndex !== -1) {
                         targets[targetIndex].favorite = !targets[targetIndex].favorite;
                         writeTargets(targets);
-                        // **Send updated targets back to renderer**
+                        // Send updated targets back to renderer
                         mainWindow.webContents.send('send-targets', { targets });
                     }
                 }
@@ -250,6 +309,13 @@ function writeTargets(targets) {
 app.whenReady().then(() => {
     createMainWindow();
 
+    // Read config
+    const config = readConfig();
+    if (!config.apiKey) {
+        // Open the API key input dialog
+        createApiKeyWindow();
+    }
+
     // Listen for 'open-add-target-dialog' event from renderer
     ipcMain.on('open-add-target-dialog', () => {
         if (!addTargetWindow) {
@@ -275,7 +341,7 @@ app.whenReady().then(() => {
             targets.push(newTarget);
             writeTargets(targets);
 
-            // **Notify main window to refresh targets**
+            // Notify main window to refresh targets
             if (mainWindow) {
                 mainWindow.webContents.send('send-targets', { targets });
             }
@@ -340,7 +406,7 @@ app.whenReady().then(() => {
             targets[targetIndex] = updatedTarget;
             writeTargets(targets);
 
-            // **Notify main window to refresh targets**
+            // Notify main window to refresh targets
             if (mainWindow) {
                 mainWindow.webContents.send('send-targets', { targets });
             }
@@ -378,7 +444,7 @@ app.whenReady().then(() => {
 
             writeTargets(updatedTargets);
 
-            // **Notify main window to refresh targets**
+            // Notify main window to refresh targets
             if (mainWindow) {
                 mainWindow.webContents.send('send-targets', { targets: updatedTargets });
             }
@@ -403,7 +469,7 @@ app.whenReady().then(() => {
     // Listen for 'update-targets' event from renderer (e.g., when favorites are toggled)
     ipcMain.on('update-targets', (event, updatedTargets) => {
         writeTargets(updatedTargets);
-        // **Send updated targets back to renderer**
+        // Send updated targets back to renderer
         mainWindow.webContents.send('send-targets', { targets: updatedTargets });
     });
 
@@ -422,7 +488,7 @@ app.whenReady().then(() => {
         mainWindow.webContents.send('open-target-in-new-tab', { target });
     });
 
-    // **Export Targets**
+    // Export Targets
     ipcMain.on('export-targets', async (event) => {
         const targetsPath = getTargetsPath();
         try {
@@ -446,7 +512,7 @@ app.whenReady().then(() => {
         }
     });
 
-    // **Import Targets**
+    // Import Targets
     ipcMain.on('import-targets', async (event) => {
         try {
             // Show open dialog
@@ -485,7 +551,7 @@ app.whenReady().then(() => {
 
             event.sender.send('import-success');
 
-            // **Notify main window to refresh targets**
+            // Notify main window to refresh targets
             if (mainWindow) {
                 mainWindow.webContents.send('send-targets', { targets: combinedTargets });
             }
@@ -493,6 +559,40 @@ app.whenReady().then(() => {
             console.error('Error importing targets:', error);
             event.sender.send('import-failure', error.message);
         }
+    });
+
+    // New IPC handlers for API key
+    ipcMain.on('open-api-key-dialog', () => {
+        if (!apiKeyWindow) {
+            createApiKeyWindow();
+        }
+    });
+
+    ipcMain.on('save-api-key', (event, apiKey) => {
+        const config = readConfig();
+        config.apiKey = apiKey;
+        writeConfig(config);
+
+        // Notify renderer process that API key is updated
+        if (mainWindow) {
+            mainWindow.webContents.send('api-key-updated', apiKey);
+        }
+
+        // Close the API key window
+        if (apiKeyWindow) {
+            apiKeyWindow.close();
+        }
+
+        dialog.showMessageBox(mainWindow, {
+            type: 'info',
+            title: 'API Key Saved',
+            message: 'Your API key has been saved successfully.',
+        });
+    });
+
+    ipcMain.on('request-api-key', (event) => {
+        const config = readConfig();
+        event.sender.send('send-api-key', config.apiKey || null);
     });
 });
 

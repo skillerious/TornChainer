@@ -99,6 +99,16 @@ body.light-mode #themeIcon {
   filter: invert(0);
 }
 
+/* API Key Button */
+#apiKeyBtn img {
+  width: 24px;
+  height: 24px;
+}
+
+body.light-mode #apiKeyBtn img {
+  filter: invert(0);
+}
+
 /* Container */
 #container {
   display: flex;
@@ -626,4 +636,46 @@ button:focus {
 
 body.light-mode #sidebar .icon {
   filter: none;
+}
+
+/* Dialog Styles */
+.dialog {
+  padding: 20px;
+  max-width: 400px;
+  margin: 50px auto;
+  text-align: center;
+  background-color: #2C3E50;
+  border-radius: 10px;
+}
+
+body.light-mode .dialog {
+  background-color: #ECF0F1;
+}
+
+.dialog h2 {
+  margin-bottom: 20px;
+  color: #ECF0F1;
+}
+
+body.light-mode .dialog h2 {
+  color: #2C3E50;
+}
+
+.dialog input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+}
+
+.dialog .buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.dialog .buttons button {
+  padding: 10px 20px;
+  margin: 0 10px;
 }

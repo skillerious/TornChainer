@@ -27,7 +27,7 @@ Welcome to **Torn Chainer**, the essential tool for **Torn Online** enthusiasts!
 
 ## 📸 Screenshots
 
-![Main Interface](https://github.com/skillerious/TornChainer/blob/main/logo/Screenshot%202024-11-10%20195637.png)
+![Main Interface](https://github.com/skillerious/TornChainer/blob/main/logo/newinterface.png)
 *Main interface showcasing Favorites and Others.*
 
 ![Add Target Dialog](https://github.com/skillerious/TornChainer/blob/main/logo/Screenshot%202024-11-10%20195650.png)

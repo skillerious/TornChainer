@@ -7,12 +7,9 @@ Welcome to **Torn Chainer**, the essential tool for **Torn Online** enthusiasts!
 ## 🚀 Features
 
 - **Effortless Target Management:** Easily add, edit, and delete target profile URLs to keep your important players organized.
-- **Categorization:** Organize your targets into customizable categories such as Rivals, Allies, Friends, and more for quick access.
 - **Search & Filter:** Quickly find specific targets using the powerful search bar and advanced filtering options.
 - **Favorites:** Mark your most important targets as favorites for instant access.
 - **Bulk Import & Export:** Import multiple targets from a CSV or JSON file and export your entire list for backups or sharing.
-- **Custom Tags:** Assign tags to your targets for enhanced organization and easy retrieval.
-- **Notes & Annotations:** Add personal notes and annotations to each target profile for detailed tracking.
 - **URL Validation:** Ensure all your target URLs are valid and up-to-date with automatic validation.
 - **Dark & Light Themes:** Switch between dark and light modes to suit your preference, with settings saved between sessions.
 - **Responsive Design:** Optimized for various screen sizes, ensuring a seamless experience on desktops, laptops, and tablets.
@@ -20,10 +17,7 @@ Welcome to **Torn Chainer**, the essential tool for **Torn Online** enthusiasts!
 - **Drag-and-Drop Reordering:** Organize your targets and categories with intuitive drag-and-drop functionality.
 - **Backup & Restore:** Securely back up your data and restore it whenever needed to prevent data loss.
 - **Multi-Language Support:** Available in multiple languages to cater to a global Torn community.
-- **Notifications:** Receive alerts for specific events, such as when a favorite target updates their profile.
-- **Integration with Torn API:** Seamlessly connect with Torn's API to fetch and display real-time data about your targets.
-- **Analytics Dashboard:** Gain insights into your target management with interactive charts and statistics.
-- **Secure Data Storage:** Your data is stored locally with encryption to ensure your information remains private and secure.
+- **Integration with Torn API:** Seamlessly connect with Torn's API to fetch and display real-time status about your targets.
 
 ## 📸 Screenshots
 
@@ -105,13 +99,6 @@ Welcome to **Torn Chainer**, the essential tool for **Torn Online** enthusiasts!
 3. Confirm the deletion in the prompt.
 
 
-### Categorizing Targets
-
-1. Navigate to the **Categories** section in the sidebar.
-2. Click **Add Category** to create a new category.
-3. Drag and drop targets into the desired categories for better organization.
-4. Rename or delete categories as needed by right-clicking on the category name.
-
 ### Using Search & Filter
 
 1. Click on the **Search Bar** at the top of the **Targets** list.
@@ -174,19 +161,12 @@ Welcome to **Torn Chainer**, the essential tool for **Torn Online** enthusiasts!
 3. Choose whether to merge with existing data or replace it.
 4. Click **Import** to restore your data.
 
-### Integration with Torn API ⚠️ (Under Construction - Coming soon!) ⚠️
+### Integration with Torn API
 
 1. Obtain your Torn API token from your Torn account settings.
 2. Navigate to **Settings** > **API Integration**.
 3. Enter your API token and click **Connect**.
-4. Torn Chainer will fetch and display real-time data related to your targets.
-
-### Using the Analytics Dashboard
-
-1. Click on the **Analytics** tab in the sidebar.
-2. View interactive charts and statistics about your target management.
-3. Analyze metrics such as the number of targets per category, tag distribution, and activity trends.
-4. Use insights to optimize your target management strategy.
+4. Torn Chainer will fetch and display real-time data related to your targets. (If target is in hospital or jail, their name will be red)
 
 ## ⚙️ Configuration
 
@@ -204,9 +184,6 @@ Welcome to **Torn Chainer**, the essential tool for **Torn Online** enthusiasts!
   - All user data, including targets, categories, tags, and settings, are stored locally in the `data` directory.
   - Data is encrypted to ensure privacy and security.
 
-- **Language Settings:**
-  - Select your preferred language from the **Settings** > **Language** menu.
-  - The application supports multiple languages to cater to a global user base.
 
 ## 📝 License
 

@@ -10,29 +10,34 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-tSZs8h21eyZbBL2pKxtWS+qIn+fhiifjGQ7X1OXyr/+wSh1u6MwFZJHufgJD2FyuZLr6x95S2h3XrqFPn5HI6w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Correctly link to the CSS file -->
+  <!-- Link to the updated CSS file -->
   <link rel="stylesheet" href="targetdialog.css">
 </head>
 <body>
-  <div id="dialogContainer">
-    <h2>Add New Target</h2>
-    <form id="addTargetForm">
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required placeholder="Enter username">
-      </div>
-      <div class="form-group">
-        <label for="url">Profile URL:</label>
-        <input type="url" id="url" name="url" required placeholder="Enter profile URL">
-      </div>
-      <div class="button-group">
-        <button type="submit" id="saveBtn"><i class="fas fa-save"></i> Save</button>
-        <button type="button" id="cancelBtn"><i class="fas fa-times"></i> Cancel</button>
-      </div>
-    </form>
+  <div class="dialog">
+    <div class="dialog-header">
+      <img src="assets/add-logo.png" alt="Add Target Logo" class="logo">
+      <h2>Add New Target</h2>
+    </div>
+    <div class="dialog-content">
+      <form id="addTargetForm">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="url">Profile URL:</label>
+          <input type="url" id="url" name="url" required placeholder="Enter profile URL">
+        </div>
+        <div class="button-group">
+          <button type="submit" id="saveBtn"><i class="fas fa-save"></i> Save</button>
+          <button type="button" id="cancelBtn"><i class="fas fa-times"></i> Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <!-- Include the JavaScript file -->
+  <!-- Include the updated JavaScript file -->
   <script src="targetdialog.js"></script>
 </body>
 </html>

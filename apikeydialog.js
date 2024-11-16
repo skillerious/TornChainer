@@ -1,20 +1,6 @@
 // apikeydialog.js
+const { ipcRenderer } = require('electron');
 
-const { remote } = require('electron'); // Import the remote module
-
-const currentWindow = remote.getCurrentWindow(); // Get the current window instance
-
-// Function to adjust window size
-function adjustWindowSize(width, height) {
-    currentWindow.setSize(width, height); // Set the window size
-}
-
-// Adjust window size when the dialog is fully loaded
-window.onload = () => {
-    adjustWindowSize(700, 1100); // Set your desired width and height in pixels
-};
-
-// Existing code for handling Save and Cancel buttons
 const apiKeyInput = document.getElementById('apiKeyInput');
 const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
 const cancelBtn = document.getElementById('cancelBtn');
@@ -32,11 +18,10 @@ saveApiKeyBtn.addEventListener('click', () => {
     const apiKey = apiKeyInput.value.trim();
     if (apiKey) {
         if (isValidApiKey(apiKey)) {
-            // Implement your API key saving logic here
-            // For example, send it to the main process or save locally
-            // Example using IPC:
-            remote.getGlobal('sharedObject').apiKey = apiKey; // Example: Using a global shared object
-            currentWindow.close(); // Close the dialog
+            // Send the API key to the main process to save
+            ipcRenderer.send('save-api-key', apiKey);
+            // Close the dialog window
+            window.close();
         } else {
             showError('Invalid API key format. Please enter a valid 16-character key.');
         }
@@ -46,7 +31,7 @@ saveApiKeyBtn.addEventListener('click', () => {
 });
 
 cancelBtn.addEventListener('click', () => {
-    currentWindow.close(); // Close the dialog without saving
+    window.close(); // Close the dialog without saving
 });
 
 // Clear error message when user starts typing

@@ -4,15 +4,32 @@ const { ipcRenderer } = require('electron');
 document.addEventListener('DOMContentLoaded', () => {
     const addTargetForm = document.getElementById('addTargetForm');
     const cancelBtn = document.getElementById('cancelBtn');
+    const usernameInput = document.getElementById('username');
+    const urlInput = document.getElementById('url');
+
+    // Function to validate Profile URL (basic validation)
+    function isValidURL(url) {
+        try {
+            new URL(url);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 
     addTargetForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const username = document.getElementById('username').value.trim();
-        const url = document.getElementById('url').value.trim();
+        const username = usernameInput.value.trim();
+        const url = urlInput.value.trim();
 
         // Basic Validation
         if (!username || !url) {
             alert('Please fill in all fields.');
+            return;
+        }
+
+        if (!isValidURL(url)) {
+            alert('Please enter a valid URL.');
             return;
         }
 

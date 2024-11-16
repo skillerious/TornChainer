@@ -4,30 +4,40 @@
 <head>
   <meta charset="UTF-8">
   <title>Edit Target</title>
+  <!-- Include Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <!-- Font Awesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-tSZs8h21eyZbBL2pKxtWS+qIn+fhiifjGQ7X1OXyr/+wSh1u6MwFZJHufgJD2FyuZLr6x95S2h3XrqFPn5HI6w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Include Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-tSZs8h21eyZbBL2pKxtWS+qIn+fhiifjGQ7X1OXyr/+wSh1u6MwFZJHufgJD2FyuZLr6x95S2h3XrqFPn5HI6w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Link to the updated CSS file -->
   <link rel="stylesheet" href="editdialog.css">
 </head>
 <body>
-  <div id="dialogContainer">
-    <h2>Edit Target</h2>
-    <form id="editTargetForm">
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required placeholder="Enter username">
-      </div>
-      <div class="form-group">
-        <label for="url">Profile URL:</label>
-        <input type="url" id="url" name="url" required placeholder="Enter profile URL">
-      </div>
-      <div class="button-group">
-        <button type="submit" id="saveBtn"><i class="fas fa-save"></i> Save</button>
-        <button type="button" id="cancelBtn"><i class="fas fa-times"></i> Cancel</button>
-      </div>
-    </form>
+  <div class="dialog">
+    <div class="dialog-header">
+      <img src="assets/edit-logo.png" alt="Edit Target Logo" class="logo">
+      <h2>Edit Target</h2>
+    </div>
+    <div class="dialog-content">
+      <form id="editTargetForm">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="url">Profile URL:</label>
+          <input type="url" id="url" name="url" required placeholder="Enter profile URL">
+        </div>
+        <div class="button-group">
+          <button type="submit" id="saveBtn"><i class="fas fa-save"></i> Save</button>
+          <button type="button" id="cancelBtn"><i class="fas fa-times"></i> Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 
+  <!-- Include the updated JavaScript file -->
   <script src="editdialog.js"></script>
 </body>
 </html>

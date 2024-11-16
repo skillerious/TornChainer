@@ -771,6 +771,11 @@ addTargetBtn.addEventListener('click', () => {
     ipcRenderer.send('open-add-target-dialog');
 });
 
+// API Key Button
+apiKeyBtn.addEventListener('click', () => {
+    ipcRenderer.send('open-api-key-dialog');
+});
+
 // Draggable Divider Functionality
 let isDragging = false;
 let startY = 0;
@@ -841,11 +846,6 @@ function updateSortIcon(iconElement, sortOrder) {
 // Initialize sort icons
 updateSortIcon(favoritesSortIcon, favoritesSortOrder);
 updateSortIcon(othersSortIcon, othersSortOrder);
-
-// API Key Button
-apiKeyBtn.addEventListener('click', () => {
-    ipcRenderer.send('open-api-key-dialog');
-});
 
 // Function to start updating player statuses every minute
 function startUpdatingPlayerStatuses() {
@@ -956,4 +956,91 @@ function updatePlayerStatuses() {
         console.log('All user statuses in batch updated. Updating UI.');
         populateTargetLists(filteredTargets);
     });
+}
+
+// =========================
+// === Context Menu IPC Handling
+// =========================
+
+/**
+ * Handle context menu commands from main process.
+ * Expected commands:
+ * - open-in-new-tab
+ * - copy-link-address
+ * - reload
+ * - inspect-element
+ * - add-favorite
+ * - remove-favorite
+ * - edit-target
+ * - delete-target
+ */
+ipcRenderer.on('context-menu-command', (event, command, data) => {
+    const webview = getActiveWebview();
+    if (!webview) return;
+
+    switch (command) {
+        case 'open-in-new-tab':
+            ipcRenderer.send('open-link-in-new-tab', data.href);
+            break;
+        case 'copy-link-address':
+            ipcRenderer.send('copy-to-clipboard', data.href);
+            break;
+        case 'reload':
+            webview.reload();
+            break;
+        case 'inspect-element':
+            webview.inspectElement(data.x, data.y);
+            break;
+        case 'add-favorite':
+            toggleFavorite(data.target);
+            break;
+        case 'remove-favorite':
+            toggleFavorite(data.target);
+            break;
+        case 'edit-target':
+            ipcRenderer.send('open-edit-target-dialog', data.target);
+            break;
+        case 'delete-target':
+            ipcRenderer.send('delete-target', data.target.username);
+            break;
+        default:
+            console.warn('Unknown context menu command:', command);
+    }
+});
+
+/**
+ * Toggle the favorite status of a target.
+ * @param {Object} target - The target object.
+ */
+function toggleFavorite(target) {
+    target.favorite = !target.favorite;
+    ipcRenderer.send('update-targets', targets);
+    populateTargetLists(filteredTargets);
+}
+
+// =========================
+// === Clipboard Handling Enhancements
+// =========================
+
+/**
+ * Listen for 'copy-to-clipboard' IPC messages.
+ */
+ipcRenderer.on('copy-to-clipboard', (event, text) => {
+    ipcRenderer.send('copy-to-clipboard', text);
+});
+
+// =========================
+// === Additional Functions
+// =========================
+
+/**
+ * Highlights the search query in the target's name.
+ * @param {string} text - The target's name.
+ * @param {string} query - The search query.
+ * @returns {string} - The HTML string with highlighted text.
+ */
+function highlightText(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
 }

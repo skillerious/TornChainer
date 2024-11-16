@@ -14,11 +14,11 @@ body, html {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(30, 30, 30, 0.85);
+    background-color: rgba(30, 30, 30, 0.95); /* Slightly opaque background */
     padding: 40px;
     border-radius: 10px;
     width: 420px; /* Adjusted width to fit within 500px window */
-    height: 350px; /* Adjusted height to fit within 450px window */
+    height: 350px; /* Adjusted height to fit within 400px window */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(10px);
     animation: fadeIn 0.5s ease-in-out;
@@ -94,7 +94,7 @@ body, html {
 .toggle-visibility {
     position: absolute;
     top: 50%;
-    right: calc(10%); /* Adjust this value as needed */
+    right: calc(15%); /* Adjust this value as needed */
     transform: translateY(-50%);
     cursor: pointer;
     width: 20px;
@@ -110,6 +110,7 @@ body, html {
     color: #ff6b6b;
     margin-top: 10px;
     display: none;
+    text-align: center;
 }
 
 .dialog-footer {
